@@ -14,18 +14,16 @@ public class PaymentController {
     public PaymentController(PaymentView view) {
         this.view = view;
         this.paymentMethods = new ArrayList<>();
-        
-        // Inisialisasi data awal sesuai modul
+
         paymentMethods.add(new Wallet("Main Wallet", 10000.0));
         paymentMethods.add(new DebitCard("1234-5678-9012", 100000.0, "1234"));
         paymentMethods.add(new CreditCard("9876-5432-1098", 5000000.0, "123", "4321"));
-        paymentMethods.add(new EWallet("08123456789", 500000.0, "1111"));
+        paymentMethods.add(new Ewallet("08123456789", 500000.0, "1111"));
     }
 
     public void processTransaction() {
         double amount = view.inputAmount();
 
-        // Filter metode pembayaran menggunakan canPay(amount)
         List<PaymentStrategy> availableMethods = paymentMethods.stream()
                 .filter(method -> method.canPay(amount))
                 .collect(Collectors.toList());
@@ -83,7 +81,7 @@ public class PaymentController {
     private String getPinFromStrategy(PaymentStrategy strategy) {
         if (strategy instanceof DebitCard) return ((DebitCard) strategy).getPin();
         if (strategy instanceof CreditCard) return ((CreditCard) strategy).getPin();
-        if (strategy instanceof EWallet) return ((EWallet) strategy).getPin();
+        if (strategy instanceof Ewallet) return ((Ewallet) strategy).getPin();
         return "";
     }
 
@@ -94,8 +92,8 @@ public class PaymentController {
             view.showMessage("Sisa saldo debit: " + ((DebitCard) strategy).getBalance());
         } else if (strategy instanceof CreditCard) {
             view.showMessage("Total hutang credit card: " + ((CreditCard) strategy).getCurrentDebt());
-        } else if (strategy instanceof EWallet) {
-            view.showMessage("Sisa saldo e-wallet: " + ((EWallet) strategy).getBalance());
+        } else if (strategy instanceof Ewallet) {
+            view.showMessage("Sisa saldo e-wallet: " + ((Ewallet) strategy).getBalance());
         }
     }
 }
